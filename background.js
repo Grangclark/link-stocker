@@ -1,20 +1,35 @@
 // background.js
 
-// 1. 拡張機能がインストール、または更新された時に実行されるイベント
+// 1. 拡張機能インストール時に右クリックメニューを登録（既存）
 chrome.runtime.onInstalled.addListener(() => {
-  // 右クリックメニュー（コンテキストメニュー）を登録
   chrome.contextMenus.create({
-    id: "stock-link",               // このメニューの固有ID（プログラム内で識別用）
-    title: "ストッカーに追加 📥",    // 右クリックした時に画面に出る文字
-    contexts: ["link"]              // ★超重要：リンクの上で右クリックした時だけ出す！
+    id: "stock-link",
+    title: "ストッカーに追加 📥",
+    contexts: ["link"]
   });
   console.log("LinkStocker: 右クリックメニューが正常に登録されました。");
 });
 
-// 2. 右クリックメニューが実際にクリックされた時のイベント（ログを出すだけ）
+// 2. ★【今日の一撃】クリックされたらURLをストレージに保存する
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "stock-link") {
-    // info.linkUrl の中に、右クリックしたリンクのURLが自動で入ってきます
-    console.log("リンクを検知しました！ターゲットURL:", info.linkUrl);
+  if (info.menuItemId === "stock-link" && info.linkUrl) {
+    const targetUrl = info.linkUrl;
+
+    // ストレージから現在のリストを取得
+    chrome.storage.local.get(["stockedLinks"], (result) => {
+      let links = result.stockedLinks || [];
+
+      // すでに同じURLが登録されていないかチェック（重複排除）
+      if (!links.includes(targetUrl)) {
+        links.push(targetUrl); // リストの末尾に追加
+
+        // ストレージを更新
+        chrome.storage.local.set({ stockedLinks: links }, () => {
+          console.log("リンクをストックしました:", targetUrl);
+        });
+      } else {
+        console.log("このリンクはすでにストックされています:", targetUrl);
+      }
+    });
   }
 });
