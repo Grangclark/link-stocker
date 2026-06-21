@@ -6,7 +6,6 @@
     body { width: 320px; font-family: sans-serif; padding: 12px; margin: 0; background-color: #f8f9fa; }
     h3 { margin-top: 0; color: #343a40; border-bottom: 2px solid #dee2e6; padding-bottom: 6px; }
     
-    /* 大砲ボタンのデザイン */
     #open-all-btn { 
       width: 100%; padding: 10px; font-size: 15px; font-weight: bold; 
       color: #fff; background-color: #007bff; border: none; border-radius: 6px; 
@@ -15,20 +14,32 @@
     #open-all-btn:hover { background-color: #0056b3; }
     #open-all-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
 
-    /* リストのデザイン */
     ul { list-style: none; padding: 0; margin: 0; max-height: 250px; overflow-y: auto; }
+    
+    /* ★【今日の一撃】アイコンと文字を横並びにするために flex を指定 */
     li { 
       display: flex; justify-content: space-between; align-items: center; 
       padding: 8px; background: #fff; border: 1px solid #ced4da; 
       border-radius: 4px; margin-bottom: 6px; font-size: 12px;
     }
+
+    /* ★【今日の一撃】アイコンとURLをまとめるコンテナ */
+    .link-container {
+      display: flex; align-items: center; gap: 6px; width: 250px;
+    }
+
+    /* ★【今日の一撃】アイコン画像のデザイン（16x16ピクセルで綺麗に丸める） */
+    .favicon-img {
+      width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0;
+    }
+
+    /* ★【今日の一撃】幅を 240px から 100% に変更（コンテナ側で制御するため） */
     .link-text { 
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-      width: 240px; color: #495057; text-decoration: none;
+      width: 100%; color: #495057; text-decoration: none;
     }
     .link-text:hover { text-decoration: underline; color: #007bff; }
     
-    /* 個別削除用のバツボタン */
     .delete-btn { 
       cursor: pointer; color: #dc3545; font-weight: bold; 
       font-size: 14px; padding: 0 4px; user-select: none; 

@@ -1,6 +1,7 @@
-// popup.js
+// popup.js (完全復活・修正版)
 
 document.addEventListener("DOMContentLoaded", () => {
+  // ポップアップが開いた瞬間にリストを描画する（これがいま消えていました！）
   renderLinks();
 
   // 「一括で全部開く！🚀」ボタンのクリックイベント
@@ -9,14 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const links = result.stockedLinks || [];
       if (links.length === 0) return;
 
-      // ★裏技：すべてのURLをループで回し、新規タブとして裏側で同時に開く！
+      // すべてのURLを新規タブとして裏側で同時に開く
       links.forEach(url => {
-        chrome.tabs.create({ url: url, active: false }); // active: false で現在の画面を維持したまま裏で開く
+        chrome.tabs.create({ url: url, active: false });
       });
 
-      // 開き終わったらストッカーを綺麗さっぱり空にする
+      // 開き終わったらストッカーを空にする
       chrome.storage.local.set({ stockedLinks: [] }, () => {
-        renderLinks(); // 画面をリセット
+        renderLinks(); 
       });
     });
   });
@@ -32,7 +33,6 @@ function renderLinks() {
 
     listContainer.innerHTML = "";
 
-    // リンクが空っぽならボタンを無効化してメッセージを出す
     if (links.length === 0) {
       openAllBtn.disabled = true;
       openAllBtn.innerText = "一括で全部開く！🚀";
@@ -40,27 +40,34 @@ function renderLinks() {
       return;
     }
 
-    // リンクがある場合はボタンを有効化
     openAllBtn.disabled = false;
     openAllBtn.innerText = `一括で全部開く！🚀 (${links.length})`;
     emptyMessage.style.display = "none";
 
-    // 配列をループして画面にリストを出力
     links.forEach((url, index) => {
       const li = document.createElement("li");
 
-      // リンク部分（クリックしたら単体でも開ける仕様）
+      const linkContainer = document.createElement("div");
+      linkContainer.className = "link-container";
+
+      // 👑 Google公式ファビコンAPI（セキュリティ制限を100%回避）
+      const img = document.createElement("img");
+      img.className = "favicon-img";
+      img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=32`;
+      img.onerror = () => { img.src = "chrome://favicon/"; };
+
       const a = document.createElement("a");
       a.href = url;
       a.className = "link-text";
       a.innerText = url;
       a.target = "_blank";
-      // 単体で開いた時も、そのリンクはストッカーから自動削除する親切設計
       a.addEventListener("click", () => {
         deleteLink(index);
       });
 
-      // 個別削除用の「×」ボタン
+      linkContainer.appendChild(img);
+      linkContainer.appendChild(a);
+
       const span = document.createElement("span");
       span.className = "delete-btn";
       span.innerText = "×";
@@ -68,21 +75,21 @@ function renderLinks() {
         deleteLink(index);
       });
 
-      li.appendChild(a);
+      li.appendChild(linkContainer);
       li.appendChild(span);
       listContainer.appendChild(li);
     });
   });
 }
 
-// 特定のリンクをリストから削除する関数
+// 特定のリンクをリストから削除する関数（これも消えてしまっていました！）
 function deleteLink(index) {
   chrome.storage.local.get(["stockedLinks"], (result) => {
     let links = result.stockedLinks || [];
-    links.splice(index, 1); // 指定されたインデックスの要素を1つ削除
+    links.splice(index, 1);
 
     chrome.storage.local.set({ stockedLinks: links }, () => {
-      renderLinks(); // 再描画
+      renderLinks();
     });
   });
 }

@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "LinkStocker",
-  "version": "1.0",
+  "version": "1.1",
   "description": "気になるリンクを右クリックでストックし、あとで一括開封するツール",
   "permissions": [
     "contextMenus",
-    "storage"
+    "storage",
+    "favicon"  // ★新しくこの権限を追加！
   ],
   "background": {
     "service_worker": "background.js"
